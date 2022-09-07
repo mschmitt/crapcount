@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+import asyncio
+import pyppeteer
+import argparse
+import json
+
+parser = argparse.ArgumentParser(description='Load a page and show the cookies it sets')
+parser.add_argument('--browser', help='name of browser binary, default chromium', nargs=1, default=['chromium'])
+parser.add_argument('--json', help='json output', action='store_true')
+parser.add_argument('url', help='An URL', nargs=1)
+args = parser.parse_args()
+
+url = args.url[0]
+
+async def main():
+	browser = await pyppeteer.launch({'executablePath': args.browser[0]})
+	page = await browser.newPage()
+	try:
+		status = await page.goto(args.url[0], { 'waitUntil': 'networkidle0' })
+	except Exception as e:
+		print(e)
+		exit(1)
+	cookies = await page.cookies()
+	await browser.close()
+	if args.json:
+		print(json.dumps({'cookies': cookies, 'cookiecount': len(cookies)}, indent=4))
+	else:
+		for cookie in cookies:
+			print(f"{cookie['domain']}: {cookie['name']}={cookie['value']}")
+		print(f"{len(cookies)} cookie{('s', '')[len(cookies)==1]} received.")
+
+asyncio.get_event_loop().run_until_complete(main())
