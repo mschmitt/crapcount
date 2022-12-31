@@ -36,7 +36,7 @@ optional arguments:
   --nourls              show urls
   --waituntil WAITUNTIL
                         page event to wait for, default
-                        networkidle2; other events: done,
+                        networkidle2; other events: load,
                         domcontentloaded, networkidle0 - see
                         https://pptr.dev/api/puppeteer.page.
                         goto
