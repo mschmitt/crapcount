@@ -1,0 +1,75 @@
+#!/usr/bin/env python3
+import asyncio
+import pyppeteer
+import argparse
+import json
+import sys
+import urllib
+
+parser = argparse.ArgumentParser(description='Cookie and Request Analyzer ++')
+parser.add_argument('--browser', help='name of browser binary, default chromium', nargs=1, default=['chromium'])
+parser.add_argument('--nocookies', help='show cookies', action='store_true')
+parser.add_argument('--nohosts', help='show hosts', action='store_true')
+parser.add_argument('--nourls', help='show urls', action='store_true')
+parser.add_argument('--waituntil', help='page event to wait for, default networkidle2; other events: done, domcontentloaded, networkidle0 - see https://pptr.dev/api/puppeteer.page.goto', nargs=1, default=['networkidle2'])
+parser.add_argument('--reportonly', help='in non-JSON mode, only report numbers.', action='store_true')
+parser.add_argument('--json', help='json output', action='store_true')
+parser.add_argument('url', help='An full URL including scheme (https:// etc.)', nargs=1)
+args = parser.parse_args()
+
+url = args.url[0]
+
+urls = set()
+hosts = set()
+
+async def intercept_network_request(request):
+	url = request.url
+	host = urllib.parse.urlparse(request.url).netloc
+	urls.add(url)
+	hosts.add(host)
+	await request.continue_()
+
+async def main():
+	browser = await pyppeteer.launch({'executablePath': args.browser[0]})
+	page = await browser.newPage()
+	# https://techoverflow.net/2019/08/10/pyppetteer-minimal-network-request-interception-example/
+	await page.setRequestInterception(True)
+	page.on('request', intercept_network_request)
+	try:
+		status = await page.goto(args.url[0], { 'waitUntil': args.waituntil[0] })
+	except Exception as e:
+		print(e)
+		exit(1)
+	cookies = await page.cookies()
+	await browser.close()
+	if args.json:
+		output = {}
+		if not args.nocookies:
+			output['cookies'] = cookies
+			output['cookiecount'] = len(cookies)
+		if not args.nohosts:
+			output['hosts'] = list(hosts)
+			output['hostcount'] = len(hosts)
+		if not args.nourls:
+			output['urls'] = list(urls)
+			output['urlcount'] = len(urls)
+		print(json.dumps(output, indent=4))
+	else:
+		if not args.nocookies:
+			if not args.reportonly:
+				for cookie in cookies:
+					print(f"Cookie: {cookie['domain']}: {cookie['name']}={cookie['value']}")
+			print(f"Cookies: Received {len(cookies)} cookie{('s', '')[len(cookies)==1]}.")
+		if not args.nohosts:
+			if not args.reportonly:
+				for host in hosts:
+					print(f"Host: {host}")
+			print(f"Hosts: Talked to {len(hosts)} host{('s', '')[len(hosts)==1]}.")
+		if not args.nourls:
+			if not args.reportonly:
+				for url in urls:
+					print(f"URL: {url}")
+			print(f"URLs: Retrieved {len(urls)} URL{('s', '')[len(urls)==1]}.")
+
+asyncio.get_event_loop().run_until_complete(main())
+
