@@ -69,7 +69,7 @@ async def main():
 			if not args.reportonly:
 				for url in urls:
 					print(f"URL: {url}")
-			print(f"URLs: Retrieved {len(urls)} URL{('s', '')[len(urls)==1]}.")
+			print(f"URLs: Accessed {len(urls)} URL{('s', '')[len(urls)==1]}.")
 
 asyncio.get_event_loop().run_until_complete(main())
 
