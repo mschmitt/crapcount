@@ -56,20 +56,20 @@ async def main():
 		print(json.dumps(output, indent=4))
 	else:
 		if not args.nocookies:
+			print(f"Cookies: Received {len(cookies)} cookie{('s', '')[len(cookies)==1]}.")
 			if not args.reportonly:
 				for cookie in cookies:
 					print(f"Cookie: {cookie['domain']}: {cookie['name']}={cookie['value']}")
-			print(f"Cookies: Received {len(cookies)} cookie{('s', '')[len(cookies)==1]}.")
 		if not args.nohosts:
+			print(f"Hosts: Talked to {len(hosts)} host{('s', '')[len(hosts)==1]}.")
 			if not args.reportonly:
 				for host in hosts:
 					print(f"Host: {host}")
-			print(f"Hosts: Talked to {len(hosts)} host{('s', '')[len(hosts)==1]}.")
 		if not args.nourls:
+			print(f"URLs: Accessed {len(urls)} URL{('s', '')[len(urls)==1]}.")
 			if not args.reportonly:
 				for url in urls:
 					print(f"URL: {url}")
-			print(f"URLs: Accessed {len(urls)} URL{('s', '')[len(urls)==1]}.")
 
 asyncio.get_event_loop().run_until_complete(main())
 
