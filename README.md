@@ -20,40 +20,19 @@ usage: crapcount [-h] [--browser BROWSER] [--nocookies]
                  [--waituntil WAITUNTIL] [--reportonly]
                  [--json]
                  url
-
-Cookie and Request Analyzer ++
-
-positional arguments:
-  url                   An full URL including scheme
-                        (https:// etc.)
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --browser BROWSER     name of browser binary, default
-                        chromium
-  --nocookies           show cookies
-  --nohosts             show hosts
-  --nourls              show urls
-  --waituntil WAITUNTIL
-                        page event to wait for, default
-                        networkidle2; other events: load,
-                        domcontentloaded, networkidle0 - see
-                        https://pptr.dev/api/puppeteer.page.
-                        goto
-  --reportonly          in non-JSON mode, only report
-                        numbers.
-  --json                json output
 ```
 
 ## Examples
 
-crapcount https://example.com
+`crapcount https://example.com`
 
-crapcount https://google.com --json
+`crapcount https://google.com --json`
 
-crapcount https://reddit.com --json --nourls --nocookies --waituntil=load
+`crapcount https://wired.com --reportonly`
 
-## Running into timeouts?
+`crapcount https://reddit.com --json --nourls --nocookies --waituntil=load`
+
+## Running into timeouts, not satisfied with the results?
 
 The `--waituntil` option may need to be adjusted depending on the page's architecture. See the [Puppeteer documentation](https://pptr.dev/api/puppeteer.page) about the available options.
 
@@ -63,7 +42,6 @@ The `--waituntil` option may need to be adjusted depending on the page's archite
 - **Chrome** or **Chromium**
 - **pyppeteer** for remote controlling *Chrome/Chromium*
   - The ancient "embedded" Chromium which pyppeteer uses by default is untested and unsupported.
-
 
 ## See also
 

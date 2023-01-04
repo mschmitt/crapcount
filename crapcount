@@ -11,7 +11,7 @@ parser.add_argument('--browser', help='name of browser binary, default chromium'
 parser.add_argument('--nocookies', help='show cookies', action='store_true')
 parser.add_argument('--nohosts', help='show hosts', action='store_true')
 parser.add_argument('--nourls', help='show urls', action='store_true')
-parser.add_argument('--waituntil', help='page event to wait for, default networkidle2; other events: load, domcontentloaded, networkidle0 - see https://pptr.dev/api/puppeteer.page.goto', nargs=1, default=['networkidle2'])
+parser.add_argument('--waituntil', help='page event to wait for, default load; other events: domcontentloaded, networkidle0, networkidle2 - see https://pptr.dev/api/puppeteer.page.goto', nargs=1, default=['load'])
 parser.add_argument('--reportonly', help='in non-JSON mode, only report numbers.', action='store_true')
 parser.add_argument('--json', help='json output', action='store_true')
 parser.add_argument('url', help='An full URL including scheme (https:// etc.)', nargs=1)
